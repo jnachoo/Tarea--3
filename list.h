@@ -1,6 +1,7 @@
 #ifndef List_h
 #define List_h
 
+typedef struct Node Node;
 typedef struct List List;
 
 List * createList(void);
@@ -13,11 +14,11 @@ void * lastList(List * list);
 
 void * prevList(List * list);
 
-void pushFront(List * list,void * data);
+void pushFront(List * list, void * data);
 
-void pushBack(List * list,void * data);
+void pushBack(List * list, void * data);
 
-void pushCurrent(List * list,void * data);
+void pushCurrent(List * list, void * data);
 
 void * popFront(List * list);
 

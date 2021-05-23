@@ -5,10 +5,7 @@
 #include "list.h"
 
 
-/*
-  structures
-*/
-
+// structures
 typedef struct Node Node;
 
 struct Node {
@@ -19,7 +16,7 @@ struct Node {
 
 typedef struct List List;
 
-//Creamos una lista de bomberos
+//Creamos una lista 
 
 struct List{
   Node * head;
@@ -31,7 +28,6 @@ struct List{
   private function declarations
 */
 
-//Creamos un Nodo y retornamos la estructura inicializada
 Node * createNode(void * data) {
     Node * new = (Node *)malloc(sizeof(Node));
     assert(new != NULL);
@@ -135,10 +131,7 @@ void * popCurrent(List * list) {
         list->head = list->current->next;
         
     list->current = aux->prev;
-
-
-
-    
+  
     free(aux);
     
     return data;
