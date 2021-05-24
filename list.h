@@ -30,4 +30,6 @@ void cleanList(List * list);
 
 bool vacio(List * list);
 
+int size(List * list);
+
 #endif /* List_h */

@@ -6,8 +6,7 @@
 #include "list.h"
 //Lo deje como idea
 
-typedef struct
-{
+typedef struct{
     int x;
     int y;
     int id;
@@ -23,16 +22,6 @@ Entrega* createEntrega(int id,int x,int y){
     new->x=x;
     new->y=y;
     return new;
-}
-
-//Conversor de char a int
-int conversorInt(char * cadena){
-    int i=cadena[0]-'0';
-    if(cadena[1]-'0'>=0){
-        i=i*10;
-        i+=cadena[1]-'0';
-    }
-    return i;
 }
 
 void importar(List *E){
@@ -57,9 +46,8 @@ void importar(List *E){
         printf("\n%d este es el total de entregas a solicitar\n",numEn);
 
         while (fgets (linea, 1023, file) != NULL) { 
-            int x,y,id,j=0;
+            int x=0,y=0,id,j=0,contX=1,contY=1;
             bool next=true,first=false;
-            char auxX[10],auxY[10];
             id=cont;
             for(int i=0;i<strlen(linea);i++){
                 if(linea[i]==' '){
@@ -67,17 +55,20 @@ void importar(List *E){
                 }
                 else{
                     if(next){
-                        auxX[i]=linea[i];
+                        x=x*contX;
+                        x+=linea[i]-'0';
                         first=true;
+                        contX=10;
                     }
                     else{
-                        auxY[j]=linea[i];
+                        if(linea[i]=='\n')break;
+                        y=y*contY;
+                        y+=linea[i]-'0';
+                        contY=10;
                         j++;
                     }
                 }
             }
-            x=conversorInt(auxX);
-            y=conversorInt(auxY);
             Entrega* entrega=createEntrega(id,x,y);
             pushBack(E,entrega);
 
@@ -92,10 +83,56 @@ void importar(List *E){
     printf("\n");
 }
 
+float distancia(Entrega * entrega1, Entrega * entrega2){
+    float x,y,d;
+    x=entrega1->x - entrega2->x;
+    y=entrega1->y - entrega2->y;
+    printf("este es x %d\n",entrega1->x);
+   // printf("este es x %f\n",y);
+    x=pow(x,2);
+    y=pow(y,2);
+
+    d=sqrt(x+y);
+    return d;
+}
+
+void distanciaEntreEntregas(List * E){
+    int id1,id2;
+    float d;
+    if(vacio(E)){
+        printf("Aun no se han ingresado entregas, pruebe cargando un archivo\n");
+        return;
+    }
+    printf("Ingrese el numero de las entregas para calcular distancia:\n");
+    printf("Entrega 1:");
+    scanf("%d",&id1);
+    printf("Entrega 2:");
+    scanf("%d",&id2);
+    Entrega* e1;
+    Entrega* e2;
+    Entrega* e=firstList(E);
+    while(e){
+        if(e->id==id1){
+            e1=e;
+        }
+        if(e->id==id2){
+            e2=e;
+        }
+        e=nextList(E);
+    }
+    d=distancia(e1,e2);
+    printf("la distancia entre la entrega %d y %d es %f\n",id1,id2,d);
+    printf"\n-----------------------------------------------------------------------\n");
+}
+
+void rutaAleatoria(List* E, List* Rutas){
+    
+}
 
 int main()
 {
     List* E=createList();
+    List* Rutas=createList();
 
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
@@ -116,10 +153,10 @@ int main()
         switch (op)
         {
             case 1:importar(E);break;
-            case 2:printf("No Implementada\n");break;
+            case 2:distanciaEntreEntregas(E);break;
             case 3:printf("No Implementada\n");break;
             case 4:printf("No Implementada\n");break;
-            case 5:printf("No Implementada\n");break;
+            case 5:rutaAleatoria(E,Rutas);break;
             case 6:printf("No Implementada\n");break;
             case 7:printf("No Implementada\n");break;
             case 8:printf("No Implementada\n");break;

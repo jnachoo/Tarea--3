@@ -161,3 +161,13 @@ bool vacio(List * list){
   }
   return false;
 }
+
+int size(List * list){
+    int cont=1;
+    list->current=list->head;
+    while(list->current!=list->tail){
+        cont++;
+        nextList(list);
+    }
+    return cont;
+}
