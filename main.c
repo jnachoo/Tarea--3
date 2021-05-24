@@ -85,8 +85,8 @@ void importar(List *E){
 
 float distancia(Entrega * entrega1, Entrega * entrega2){
     float x,y,d;
-    x=entrega1->x - entrega2->x;
-    y=entrega1->y - entrega2->y;
+    x=fabs(entrega1->x - entrega2->x);
+    y=fabs(entrega1->y - entrega2->y);
     printf("este es x %d\n",entrega1->x);
    // printf("este es x %f\n",y);
     x=pow(x,2);
@@ -122,11 +122,68 @@ void distanciaEntreEntregas(List * E){
     }
     d=distancia(e1,e2);
     printf("la distancia entre la entrega %d y %d es %f\n",id1,id2,d);
-    printf"\n-----------------------------------------------------------------------\n");
+    printf("\n-----------------------------------------------------------------------\n");
 }
 
+//Falla entregando Entregas repetidas
 void rutaAleatoria(List* E, List* Rutas){
-    
+    List *new = createList();
+    int cont=0, numero,i,tamano,*a,*b,aux,j;
+    float dist=0;
+    Entrega *e,*e1,*e2;
+    tamano = size(E);
+    a = malloc(sizeof(int)*tamano);
+    b = malloc(sizeof(int)*tamano);
+    numero = rand() % tamano;
+    aux = numero;
+    for(i=0 ; i<tamano ; i++)
+    {
+        a[i] = 0;
+        b[i] = 0;
+    }
+    printf("La ruta seguida es:");
+    for(i=0 ; i<tamano ; i++)
+    {
+        if(a[i]==0)
+        {
+            e = firstList(E);
+            while (e)
+            {
+                if(e->id == numero)
+                {
+                    a[i]=1;
+                    e1 = e;
+                    printf(" [%d] ",e->id);
+                    pushBack(new,e1);
+                    dist += distancia(e1,e2);
+                    e2 = e1;
+                    //numero = rand() % tamano;
+                    while(aux == numero)
+                    {
+                        numero = rand() % tamano;
+                        for(j=0 ; j<cont+1 ; j++)
+                        {
+                            if(numero == b[j])break;
+                            if(0==b[j]) b[j]=numero;
+                        }
+                        
+                        
+                    }
+                    cont++;
+                    aux=numero;
+                    break;
+                }
+                e = nextList(E);
+            }
+        }
+
+    }
+    printf("\nEscriba el nombre de la Ruta\n");
+    char nombre[50];
+    scanf("%s",&nombre);
+    printf("-----------------------------------------------------------------------\n");
+    printf("***** La distancia de la ruta %s es : %f *****\n",nombre,dist);
+    printf("-----------------------------------------------------------------------\n\n");
 }
 
 int main()
