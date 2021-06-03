@@ -13,7 +13,14 @@ typedef struct{
 }Entrega;
 
 typedef struct{
-    List* entregas;
+    float distancia;
+    char nombre[50];
+    List *listaruta;
+}Ruta;
+
+typedef struct{
+    List *entregas;
+    int Numentregas;
 }Entregas;
 
 Entrega* createEntrega(int id,int x,int y){
@@ -87,7 +94,7 @@ float distancia(Entrega * entrega1, Entrega * entrega2){
     float x,y,d;
     x=fabs(entrega1->x - entrega2->x);
     y=fabs(entrega1->y - entrega2->y);
-    printf("este es x %d\n",entrega1->x);
+    //printf("este es x %d\n",entrega1->x);
    // printf("este es x %f\n",y);
     x=pow(x,2);
     y=pow(y,2);
@@ -124,72 +131,132 @@ void distanciaEntreEntregas(List * E){
     printf("la distancia entre la entrega %d y %d es %f\n",id1,id2,d);
     printf("\n-----------------------------------------------------------------------\n");
 }
+int solucionador(int *a, int tamano)
+{
+    int i,j,aux,k=0;
 
-//Falla entregando Entregas repetidas
-void rutaAleatoria(List* E, List* Rutas){
-    List *new = createList();
-    int cont=0, numero,i,tamano,*a,*b,aux,j;
-    float dist=0;
-    Entrega *e,*e1,*e2;
-    tamano = size(E);
-    a = malloc(sizeof(int)*tamano);
-    b = malloc(sizeof(int)*tamano);
-    numero = rand() % tamano;
-    aux = numero;
-    for(i=0 ; i<tamano ; i++)
+    for(i=1 ; i<tamano ; i++)
     {
-        a[i] = 0;
-        b[i] = 0;
-    }
-    printf("La ruta seguida es:");
-    for(i=0 ; i<tamano ; i++)
-    {
-        if(a[i]==0)
+        aux = i;
+        for(j=0 ; j<tamano ; j++)
         {
-            e = firstList(E);
-            while (e)
+            if(a[j]==aux)
             {
-                if(e->id == numero)
-                {
-                    a[i]=1;
-                    e1 = e;
-                    printf(" [%d] ",e->id);
-                    pushBack(new,e1);
-                    dist += distancia(e1,e2);
-                    e2 = e1;
-                    //numero = rand() % tamano;
-                    while(aux == numero)
-                    {
-                        numero = rand() % tamano;
-                        for(j=0 ; j<cont+1 ; j++)
-                        {
-                            if(numero == b[j])break;
-                            if(0==b[j]) b[j]=numero;
-                        }
-                        
-                        
-                    }
-                    cont++;
-                    aux=numero;
-                    break;
-                }
-                e = nextList(E);
+                k=0;
+                break;
+            }
+            else
+            {
+                k++;
             }
         }
-
+        if(k!=0)
+        {
+            return aux;
+        }
     }
-    printf("\nEscriba el nombre de la Ruta\n");
-    char nombre[50];
-    scanf("%s",&nombre);
-    printf("-----------------------------------------------------------------------\n");
-    printf("***** La distancia de la ruta %s es : %f *****\n",nombre,dist);
-    printf("-----------------------------------------------------------------------\n\n");
 }
-
+//Falla entregando Entregas repetidas
+int rutaAleatoria(List* E, Ruta* r, Entregas *x)
+{
+    int i,j,cont=0,tamano,numero,*a,*b,aux;
+    float dist=0;
+    Entrega *e,*e2;
+    tamano = size(E);
+    a = malloc (sizeof(int)*tamano);
+    b = malloc (sizeof(int)*tamano);
+    for (i=0 ; i < tamano ; i++)
+    {
+        a[i] = -1;
+        b[i]  = -1;
+    }
+    for(i=0 ; i<tamano ; i++)
+    {
+        numero = rand() % (tamano-2)+1;
+        a[i] = numero;
+    }
+    for(i=0 ; i<tamano ; i++)
+    {
+        aux = a[i];
+        for ( j = 0; j < tamano; j++)
+        {
+            if(j != i && aux == a[j])
+            {
+                a[j] = -1;
+            }
+        }
+          
+    }
+    for(i=0 ; i<tamano ; i++)
+    {
+        if(a[i]==-1)
+        {
+            a[i] = solucionador(a,tamano);
+        }
+    }
+    printf("\nLa ruta seguida es: ");
+    for(i=0 ; i<tamano ; i++)
+    {
+        e = firstList(E);
+        e2 = e;
+        while(e)
+        {
+            if(a[i] == e->id)
+            {
+                printf("[%d] ",e->id);
+                pushBack(r->listaruta,e);
+                e2 = e;
+                break;
+            }
+            e = nextList(E);
+            if(e != NULL)
+            dist += distancia(e,e2);
+        }
+    }
+    r->distancia = dist;
+    printf("\nEscriba el nombre de la Ruta\n");
+    scanf("%s",&r->nombre);
+    printf("-----------------------------------------------------------------------\n");
+    printf("***** La distancia de la ruta %s es : %f *****\n",r->nombre,r->distancia);
+    printf("-----------------------------------------------------------------------\n\n");
+    x->Numentregas++;
+    /*char cad[30];
+    sprintf( cad, "%f" , r->distancia);
+    insertTreeMap(map,cad,r);*/
+    pushBack(x->entregas,r);
+    printf("\n");
+}
+//ERROR : Muestra solo la ultima entrega guardada
+void mostraRutas(Entregas *e)
+{
+    if(e->Numentregas==0) 
+    {
+        printf("-----------------------------------------------------------------------\n");
+        printf("                 No hay rutas Almacenadas\n");
+    }
+    else
+    {
+        printf("-----------------------------------------------------------------------\n");
+        printf("************************* SUS RUTAS SON *******************************\n");
+        printf("-----------------------------------------------------------------------\n");
+        Ruta *r = firstList(e->entregas); 
+        while(r)
+        {
+            printf("La distancia recorrida de la ruta %s es : %f\n",r->nombre,r->distancia);
+            r = nextList(e->entregas);
+        }
+    }
+    printf("-----------------------------------------------------------------------\n");
+}
 int main()
 {
     List* E=createList();
-    List* Rutas=createList();
+    Ruta* r = malloc(sizeof(Ruta));
+    r->listaruta = createList();
+    r->distancia =0;
+    Entregas *x = malloc(sizeof(Entregas));
+    x->Numentregas = 0;
+    x->entregas = createList();
 
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
@@ -213,9 +280,9 @@ int main()
             case 2:distanciaEntreEntregas(E);break;
             case 3:printf("No Implementada\n");break;
             case 4:printf("No Implementada\n");break;
-            case 5:rutaAleatoria(E,Rutas);break;
+            case 5:rutaAleatoria(E,r,x);break;
             case 6:printf("No Implementada\n");break;
-            case 7:printf("No Implementada\n");break;
+            case 7:mostraRutas(x);break;
             case 8:printf("No Implementada\n");break;
         }
     }
