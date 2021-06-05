@@ -32,6 +32,48 @@ Entrega* createEntrega(int id,int x,int y){
     return new;
 }
 
+void entregasCercanas(float x, float y,List* e){
+Entrega a;
+a->x=x;
+a->y=y;    
+Entrega ec[3];
+int cont=0;
+e=firstList(e);
+ec[0]=e->current->data;
+e->current=nextList(e);
+ec[1]=e->current->data;
+e->current=nextList(e);
+ec[2]=e->current->data;
+e->current=nextList(e);
+
+while(e){
+    for(cont=0;cont<3;cont++){
+        if(distancia(ec[cont],a)>distancia(a,e->current->data)){
+            switch(cont){
+                case 0:
+                    ec[2]=ec[1];
+                    ec[1]=ec[0]
+                    ec[0]=e->current->data;
+                    break;
+                case 1:
+                    ec[2]=ec[1];
+                    ec[1]=e->current->data;
+                    break;
+                case 2:
+                    ec[2]=e->current->data;
+                    break;
+            }
+        }
+    }
+    e=nextList(e);
+}
+printf("Las 3 entregas mas cercanas son:\n");
+for(cont=0;cont<3;cont++){
+    printf("Id: %d , Distancia: %f\n",ec[0]->id,distancia(ec[0],a))
+}
+return;
+}
+
 void importar(List *E){
 
     printf("-----------------------------------------------------------------------\n");
@@ -290,6 +332,12 @@ int main()
     Entregas *x = malloc(sizeof(Entregas));
     x->Numentregas = 0;
     x->entregas = createList();
+    float px,py;
+    printf("Favor ingrese sus coordenadas actuales");
+    printf("Posicion en el eje x");
+    scanf("%f",&px);
+    printf("Posicion en el eje y");
+    scanf("%f",&py);
 
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
@@ -311,7 +359,7 @@ int main()
         {
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
-            case 3:printf("No Implementada\n");break;
+            case 3:entregasCercanas(px,py,E);break;
             case 4:printf("No Implementada\n");break;
             case 5:rutaAleatoria(E,r,x,map);break;
             case 6:printf("No Implementada\n");break;
