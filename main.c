@@ -32,46 +32,103 @@ Entrega* createEntrega(int id,int x,int y){
     return new;
 }
 
-void entregasCercanas(float x, float y,List* e){
-Entrega a;
-a->x=x;
-a->y=y;    
-Entrega ec[3];
-int cont=0;
-e=firstList(e);
-ec[0]=e->current->data;
-e->current=nextList(e);
-ec[1]=e->current->data;
-e->current=nextList(e);
-ec[2]=e->current->data;
-e->current=nextList(e);
+float distancia(Entrega * entrega1, Entrega * entrega2){
+    float x,y,d;
+    x=fabs(entrega1->x - entrega2->x);
+    y=fabs(entrega1->y - entrega2->y);
+    //printf("este es x %d\n",entrega1->x);
+   // printf("este es x %f\n",y);
+    x=pow(x,2);
+    y=pow(y,2);
 
-while(e){
-    for(cont=0;cont<3;cont++){
-        if(distancia(ec[cont],a)>distancia(a,e->current->data)){
-            switch(cont){
-                case 0:
-                    ec[2]=ec[1];
-                    ec[1]=ec[0]
-                    ec[0]=e->current->data;
-                    break;
-                case 1:
-                    ec[2]=ec[1];
-                    ec[1]=e->current->data;
-                    break;
-                case 2:
-                    ec[2]=e->current->data;
-                    break;
-            }
-        }
+    d=sqrt(x+y);
+    return d;
+}
+
+void entregasCercanas(List* E)
+{
+    Entregas *d;
+    if(size(E) ==0)
+    {
+        printf("NO EXISTEN SUFICIENTES ENTREGAS\n");
     }
-    e=nextList(e);
-}
-printf("Las 3 entregas mas cercanas son:\n");
-for(cont=0;cont<3;cont++){
-    printf("Id: %d , Distancia: %f\n",ec[0]->id,distancia(ec[0],a))
-}
-return;
+    else
+    {
+        int px,py;
+        printf("Favor ingrese sus coordenadas actuales\n");
+        printf("Posicion en el eje x: ");
+        scanf("%d",&px);
+        printf("Posicion en el eje y: ");
+        scanf("%d",&py);
+        Entrega *e1,*e2,*e3,*e4,*aux,*a;
+        float dist=0,distaux,d1,d2,d3;
+        a = malloc(sizeof(Entrega));
+        a->y = py;
+        a->x = px;
+        aux = firstList(E);
+        e1 = aux;
+        e2 = aux;
+        e3 = aux;
+        dist = distancia(a,aux);
+        printf("-----------------------------------------------------------------------\n");
+        printf("                      Las entregas son: \n");
+        printf("-----------------------------------------------------------------------\n");
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0)
+            {
+                dist = distaux;
+                e1 = aux;
+            }
+            aux = nextList(E);
+        }
+        d1 = dist;
+        //printf("ID: %d, Distancia: %f \n",e1->id,dist);
+        distaux = 0;
+        
+        aux = firstList(E);
+        dist = distancia(a,aux);
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0 && aux->id != e1->id)
+            {
+                dist = distaux;
+                e2 = aux;
+            }
+            aux = nextList(E);
+        }
+        d2=dist;
+        //printf("ID: %d, Distancia: %f \n",e2->id,dist);
+        
+        distaux = 0;
+        aux = firstList(E);
+        dist = distancia(a,aux);
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0 && aux->id != e2->id && aux->id != e1->id)
+            {
+                dist = distaux;
+                e3 = aux;
+            }
+            aux = nextList(E);
+        }
+        d3=dist;
+        if(d2 == d1 &&d1 ==d3)
+        {
+            printf("ID: %d, Distancia: %f \n",e3->id,dist);
+        }
+        else
+        {
+            printf("ID: %d, Distancia: %f \n",e1->id,d1);
+            printf("ID: %d, Distancia: %f \n",e2->id,d2);
+            printf("ID: %d, Distancia: %f \n",e3->id,d3);
+        }
+        printf("-----------------------------------------------------------------------\n");
+    }
+    //tarea3_tsp
 }
 
 void importar(List *E){
@@ -133,18 +190,6 @@ void importar(List *E){
     printf("\n");
 }
 
-float distancia(Entrega * entrega1, Entrega * entrega2){
-    float x,y,d;
-    x=fabs(entrega1->x - entrega2->x);
-    y=fabs(entrega1->y - entrega2->y);
-    //printf("este es x %d\n",entrega1->x);
-   // printf("este es x %f\n",y);
-    x=pow(x,2);
-    y=pow(y,2);
-
-    d=sqrt(x+y);
-    return d;
-}
 
 void distanciaEntreEntregas(List * E){
     int id1,id2;
@@ -332,12 +377,6 @@ int main()
     Entregas *x = malloc(sizeof(Entregas));
     x->Numentregas = 0;
     x->entregas = createList();
-    float px,py;
-    printf("Favor ingrese sus coordenadas actuales");
-    printf("Posicion en el eje x");
-    scanf("%f",&px);
-    printf("Posicion en el eje y");
-    scanf("%f",&py);
 
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
@@ -359,7 +398,7 @@ int main()
         {
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
-            case 3:entregasCercanas(px,py,E);break;
+            case 3:entregasCercanas(E);break;
             case 4:printf("No Implementada\n");break;
             case 5:rutaAleatoria(E,r,x,map);break;
             case 6:printf("No Implementada\n");break;
