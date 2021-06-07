@@ -571,8 +571,8 @@ void mostrarentregas(List*E, TreeMap *map)
 }
 
 void mejorRuta(List * E){
-    if(size(E) ==0){
-        printf("No hay entregas suficientes\n");
+    if(size(E)==0){
+        printf("No hay entregas suficientes.\n");
         return;
     }
     int px,py;
@@ -583,6 +583,7 @@ void mejorRuta(List * E){
 
     
 }
+
 /* Función para comparar claves de tipo string */
 int lower_than_string(void* key1, void* key2){
     float k1=*(float*) key1;
@@ -590,6 +591,7 @@ int lower_than_string(void* key1, void* key2){
     if(k1<k2) return 1;
     return 0;
 }
+
 int main()
 {
     TreeMap* map = createTreeMap(lower_than_string);
@@ -622,7 +624,7 @@ int main()
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
             case 3:entregasCercanas(E);break;
-            case 4:printf("No Implementada\n");break;
+            case 4:crearRuta(E);break;
             case 5:rutaAleatoria(E,r,x,map,pq);break;
             case 6:mostrarentregas(E,map);break;
             case 7:mostraRutas(x,map,pq);break;
