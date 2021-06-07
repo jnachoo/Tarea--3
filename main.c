@@ -5,6 +5,7 @@
 #include <math.h>
 #include "list.h"
 #include "treemap.h"
+#include "heap.h"
 //Lo deje como idea
 
 typedef struct{
@@ -245,8 +246,9 @@ int solucionador(int *a, int tamano)
     }
 }
 //Falla entregando Entregas repetidas
-int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map)
+int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map, Heap *pq)
 {
+
     int i,j,cont=0,tamano,numero,*a,*b,aux;
     float dist=0;
     Entrega *e,*e2,*e1;
@@ -314,26 +316,19 @@ int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map)
         }
     }
     r->distancia = dist;
-    // i = rand() % 100;
     printf("\nEscriba el nombre de la Ruta\n");
     scanf("%s",&r->nombre);
     printf("-----------------------------------------------------------------------\n");
     printf("***** La distancia de la ruta %s es : %f *****\n",r->nombre,r->distancia);
-    //printf("***** La distancia de la ruta %s es : %d ***o**\n",r->nombre,i);
     printf("-----------------------------------------------------------------------\n\n");
     x->Numentregas++;
-   //char cad[30];
-    //sprintf( cad, "%f" , r->distancia);
-   // i = *((int*)dist);
-   if(!r)printf("NULL;\n");
-   if(r != NULL)printf("NO-NULL;\n");
     insertTreeMap(map,&r->distancia,r);
-   // insertTreeMap(map,&i,r);
-    pushBack(x->entregas,r);
+    heap_push(pq,r,r->distancia);
     printf("\n");
+ 
 }
 //ERROR : Muestra solo la ultima entrega guardada
-void mostraRutas(Entregas *e, TreeMap *map)
+void mostraRutas(Entregas *e, TreeMap *map, Heap *pq)
 {
     if(e->Numentregas==0) 
     {
@@ -345,26 +340,96 @@ void mostraRutas(Entregas *e, TreeMap *map)
         printf("-----------------------------------------------------------------------\n");
         printf("************************* SUS RUTAS SON *******************************\n");
         printf("-----------------------------------------------------------------------\n");
-        Ruta *r = firstList(e->entregas); 
-        while(r)
-        {
-            printf("La distancia recorrida de la ruta %s es : %f\n",r->nombre,r->distancia);
-            r = nextList(e->entregas);
-        }
-        r = firstTreeMap(map); 
-        while(r)
-        {
-            printf("La distancia recorrida de la ruta en el MAPA %s es : %f\n",r->nombre,r->distancia);
-            r = nextTreeMap(map);
-        }
+        int i;
+        Ruta *r = firstTreeMap(map);
+        printf("Nombre: %s ,Distancia: %f\n",r->nombre,r->distancia);
+        //if(nextTreeMap(map)==NULL) printf("NULL");
+        /*
+        while(heap_top(pq)){
+            r = heap_top(pq);
+            printf("Nombre: %s, Distancia: %f\n",r->nombre,r->distancia);
+            heap_pop(pq);
+        }*/
+        
     }
     printf("-----------------------------------------------------------------------\n");
 }
+void mostrarentregas(List*E, TreeMap *map)
+{
+    int i,p,q;
+    Ruta *r = firstTreeMap(map);
+    printf("La distancia de la ruta %s es %f\n",r->nombre,r->distancia);
+    int tamano = size(r->listaruta);
+    Entrega *e = firstList(r->listaruta);
+    printf("ID     X        Y\n");
+    while (e)
+    {
+        printf("[%d] = (%d , %d)\n",e->id,e->x,e->y);
+        e = nextList(r->listaruta);
+    }
+    printf("Seleccione mediante el id, la ruta que desea cambiar");
+    scanf("%d",&p);
+    e = firstList(r->listaruta);
+    while (e)
+    {
+        if(p = e->id)break;
+        e = nextList(r->listaruta);
+    }
+    int w = rand() % (tamano-2)+1;
+    int x,y,auxid;
+    Entrega *e2 = firstList(r->listaruta);
+    while (e2)
+    {
+        if(w = e2->id)break;
+        e2 = nextList(r->listaruta);
+    }
+    x = e->x;
+    e->x = e2->x;
+    e2->x = x;
+    y = e->y;
+    e->y = e2->y;
+    e2->y = y;
+    auxid = e->id;
+    e->id = e2->id;
+    e2->id = auxid;
+    printf("\nLa ruta seguida es: ");
+    /*int j=0;
+    Entrega *e1;
+    for(i=0 ; i<tamano ; i++)
+    {
+        e = firstList(E);
+        e2 = e;
+        while(e)
+        {
+            if(a[i] == e->id)
+            {
+                printf("[%d] ",e->id);
+                pushBack(r->listaruta,e);
+                if(j==0)
+                {
+                    e1 = e;
+                    j++;
+                }
+                else
+                {
+                    if(j==1)
+                    {
+                        e2 = e;
+                        
+                        dist += distancia(e1,e2);
+                        e1 = e2;
+                    }
+                }
+            }
+            e = nextList(E);
+        }
+    }*/
+}
 /* Función para comparar claves de tipo string */
 int lower_than_string(void* key1, void* key2){
-    char* k1=(char*) key1;
-    char* k2=(char*) key2;
-    if(strcmp(k1,k2)<0) return 1;
+    float k1=*(float*) key1;
+    float k2=*(float*) key2;
+    if(k1<k2) return 1;
     return 0;
 }
 int main()
@@ -377,7 +442,7 @@ int main()
     Entregas *x = malloc(sizeof(Entregas));
     x->Numentregas = 0;
     x->entregas = createList();
-
+    Heap*pq = createHeap();
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
     printf("-----------------------------------------------------------------------\n");
@@ -400,9 +465,9 @@ int main()
             case 2:distanciaEntreEntregas(E);break;
             case 3:entregasCercanas(E);break;
             case 4:printf("No Implementada\n");break;
-            case 5:rutaAleatoria(E,r,x,map);break;
-            case 6:printf("No Implementada\n");break;
-            case 7:mostraRutas(x,map);break;
+            case 5:rutaAleatoria(E,r,x,map,pq);break;
+            case 6:mostrarentregas(E,map);break;
+            case 7:mostraRutas(x,map,pq);break;
             case 8:printf("No Implementada\n");break;
         }
     }

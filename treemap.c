@@ -67,14 +67,14 @@ void insertTreeMap(TreeMap * tree, void* key, void * value) {
     }
     else
     {
-      printf("\nENTRO\n");
+      //printf("\nENTRO\n");
       tree->root = nuevo;
       tree->current = tree->root;
     }
   }
   else 
   {
-    printf("\n LA CLAVE ES IGUAL\n");
+    printf("\n EL MAPA DETECTA QUE LA CLAVE ES IGUAL\n");
   }
 }
 
