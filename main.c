@@ -5,6 +5,7 @@
 #include <math.h>
 #include "list.h"
 #include "treemap.h"
+#include "heap.h"
 //Lo deje como idea
 
 typedef struct{
@@ -32,55 +33,107 @@ Entrega* createEntrega(int id,int x,int y){
     return new;
 }
 
-void entregasCercanas(float px, float py,List * E){
+float distancia(Entrega * entrega1, Entrega * entrega2){
+    float x,y,d;
+    x=fabs(entrega1->x - entrega2->x);
+    y=fabs(entrega1->y - entrega2->y);
+    //printf("este es x %d\n",entrega1->x);
+   // printf("este es x %f\n",y);
+    x=pow(x,2);
+    y=pow(y,2);
 
-Entrega * a = (Entrega*)malloc(sizeof(Entrega));
-a->x=px;
-a->y=py;    
-//Entrega ec[3];
-Entrega * ec[3] = (Entrega*)malloc(3*sizeof(Entrega));
-int cont=0;
-E=firstList(E);
+    d=sqrt(x+y);
+    return d;
+}
 
-/*
-ec[0]=e->entregas;
-e->current=nextList(e);
-ec[1]=e->current->data;
-e->current=nextList(e);
-ec[2]=e->current->data;
-e->current=nextList(e);
-
-while(e){
-    for(cont=0;cont<3;cont++){
-        if(distancia(ec[cont],a)>distancia(a,e->current->data)){
-            switch(cont){
-                case 0:
-                    ec[2]=ec[1];
-                    ec[1]=ec[0];
-                    ec[0]=e->current->data;
-                    break;
-                case 1:
-                    ec[2]=ec[1];
-                    ec[1]=e->current->data;
-                    break;
-                case 2:
-                    ec[2]=e->current->data;
-                    break;
-            }
-        }
+void entregasCercanas(List* E)
+{
+    Entregas *d;
+    if(size(E) ==0)
+    {
+        printf("NO EXISTEN SUFICIENTES ENTREGAS\n");
     }
-    e=nextList(e);
-}
-printf("Las 3 entregas mas cercanas son:\n");
-for(cont=0;cont<3;cont++){
-    printf("Id: %d , Distancia: %f\n",ec[0]->id,distancia(ec[0],a));
-}
-*/
-return;
+    else
+    {
+        int px,py;
+        printf("Favor ingrese sus coordenadas actuales\n");
+        printf("Posicion en el eje x: ");
+        scanf("%d",&px);
+        printf("Posicion en el eje y: ");
+        scanf("%d",&py);
+        Entrega *e1,*e2,*e3,*e4,*aux,*a;
+        float dist=0,distaux,d1,d2,d3;
+        a = malloc(sizeof(Entrega));
+        a->y = py;
+        a->x = px;
+        aux = firstList(E);
+        e1 = aux;
+        e2 = aux;
+        e3 = aux;
+        dist = distancia(a,aux);
+        printf("-----------------------------------------------------------------------\n");
+        printf("                      Las entregas son: \n");
+        printf("-----------------------------------------------------------------------\n");
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0)
+            {
+                dist = distaux;
+                e1 = aux;
+            }
+            aux = nextList(E);
+        }
+        d1 = dist;
+        //printf("ID: %d, Distancia: %f \n",e1->id,dist);
+        distaux = 0;
+        
+        aux = firstList(E);
+        dist = distancia(a,aux);
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0 && aux->id != e1->id)
+            {
+                dist = distaux;
+                e2 = aux;
+            }
+            aux = nextList(E);
+        }
+        d2=dist;
+        //printf("ID: %d, Distancia: %f \n",e2->id,dist);
+        
+        distaux = 0;
+        aux = firstList(E);
+        dist = distancia(a,aux);
+        while (aux)
+        {
+            distaux = distancia(a,aux);
+            if(dist>distaux && dist != 0 && distaux!=0 && aux->id != e2->id && aux->id != e1->id)
+            {
+                dist = distaux;
+                e3 = aux;
+            }
+            aux = nextList(E);
+        }
+        d3=dist;
+        if(d2 == d1 &&d1 ==d3)
+        {
+            printf("ID: %d, Distancia: %f \n",e3->id,dist);
+        }
+        else
+        {
+            printf("ID: %d, Distancia: %f \n",e1->id,d1);
+            printf("ID: %d, Distancia: %f \n",e2->id,d2);
+            printf("ID: %d, Distancia: %f \n",e3->id,d3);
+        }
+        printf("-----------------------------------------------------------------------\n");
+    }
+    //tarea3_tsp
 }
 
 void importar(List *E){
-    printf("A\n");
+
     printf("-----------------------------------------------------------------------\n");
     char nameFile[101];
     FILE *file;
@@ -138,18 +191,6 @@ void importar(List *E){
     printf("\n");
 }
 
-float distancia(Entrega * entrega1, Entrega * entrega2){
-    float x,y,d;
-    x=fabs(entrega1->x - entrega2->x);
-    y=fabs(entrega1->y - entrega2->y);
-    //printf("este es x %d\n",entrega1->x);
-   // printf("este es x %f\n",y);
-    x=pow(x,2);
-    y=pow(y,2);
-
-    d=sqrt(x+y);
-    return d;
-}
 
 void distanciaEntreEntregas(List * E){
     int id1,id2;
@@ -205,8 +246,9 @@ int solucionador(int *a, int tamano)
     }
 }
 //Falla entregando Entregas repetidas
-int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map)
+int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map, Heap *pq)
 {
+
     int i,j,cont=0,tamano,numero,*a,*b,aux;
     float dist=0;
     Entrega *e,*e2,*e1;
@@ -274,27 +316,20 @@ int rutaAleatoria(List* E, Ruta* r, Entregas *x, TreeMap*map)
         }
     }
     r->distancia = dist;
-    // i = rand() % 100;
     printf("\nEscriba el nombre de la Ruta\n");
     scanf("%s",&r->nombre);
     printf("-----------------------------------------------------------------------\n");
     printf("***** La distancia de la ruta %s es : %f *****\n",r->nombre,r->distancia);
-    //printf("***** La distancia de la ruta %s es : %d ***o**\n",r->nombre,i);
     printf("-----------------------------------------------------------------------\n\n");
     x->Numentregas++;
-   //char cad[30];
-    //sprintf( cad, "%f" , r->distancia);
-   // i = *((int*)dist);
-   if(!r)printf("NULL;\n");
-   if(r != NULL)printf("NO-NULL;\n");
     insertTreeMap(map,&r->distancia,r);
-   // insertTreeMap(map,&i,r);
-    pushBack(x->entregas,r);
+    heap_push(pq,r,r->distancia);
     printf("\n");
+ 
 }
 //ERROR : Muestra solo la ultima entrega guardada
-void mostraRutas(Entregas *e, TreeMap *map){
-
+void mostraRutas(Entregas *e, TreeMap *map, Heap *pq)
+{
     if(e->Numentregas==0) 
     {
         printf("-----------------------------------------------------------------------\n");
@@ -305,27 +340,96 @@ void mostraRutas(Entregas *e, TreeMap *map){
         printf("-----------------------------------------------------------------------\n");
         printf("************************* SUS RUTAS SON *******************************\n");
         printf("-----------------------------------------------------------------------\n");
-        Ruta *r = firstList(e->entregas); 
-        while(r)
-        {
-            printf("La distancia recorrida de la ruta %s es : %f\n",r->nombre,r->distancia);
-            r = nextList(e->entregas);
-        }
-        r = firstTreeMap(map); 
-        while(r)
-        {
-            printf("La distancia recorrida de la ruta en el MAPA %s es : %f\n",r->nombre,r->distancia);
-            r = nextTreeMap(map);
-        }
+        int i;
+        Ruta *r = firstTreeMap(map);
+        printf("Nombre: %s ,Distancia: %f\n",r->nombre,r->distancia);
+        //if(nextTreeMap(map)==NULL) printf("NULL");
+        /*
+        while(heap_top(pq)){
+            r = heap_top(pq);
+            printf("Nombre: %s, Distancia: %f\n",r->nombre,r->distancia);
+            heap_pop(pq);
+        }*/
+        
     }
     printf("-----------------------------------------------------------------------\n");
 }
-//
+void mostrarentregas(List*E, TreeMap *map)
+{
+    int i,p,q;
+    Ruta *r = firstTreeMap(map);
+    printf("La distancia de la ruta %s es %f\n",r->nombre,r->distancia);
+    int tamano = size(r->listaruta);
+    Entrega *e = firstList(r->listaruta);
+    printf("ID     X        Y\n");
+    while (e)
+    {
+        printf("[%d] = (%d , %d)\n",e->id,e->x,e->y);
+        e = nextList(r->listaruta);
+    }
+    printf("Seleccione mediante el id, la ruta que desea cambiar");
+    scanf("%d",&p);
+    e = firstList(r->listaruta);
+    while (e)
+    {
+        if(p = e->id)break;
+        e = nextList(r->listaruta);
+    }
+    int w = rand() % (tamano-2)+1;
+    int x,y,auxid;
+    Entrega *e2 = firstList(r->listaruta);
+    while (e2)
+    {
+        if(w = e2->id)break;
+        e2 = nextList(r->listaruta);
+    }
+    x = e->x;
+    e->x = e2->x;
+    e2->x = x;
+    y = e->y;
+    e->y = e2->y;
+    e2->y = y;
+    auxid = e->id;
+    e->id = e2->id;
+    e2->id = auxid;
+    printf("\nLa ruta seguida es: ");
+    /*int j=0;
+    Entrega *e1;
+    for(i=0 ; i<tamano ; i++)
+    {
+        e = firstList(E);
+        e2 = e;
+        while(e)
+        {
+            if(a[i] == e->id)
+            {
+                printf("[%d] ",e->id);
+                pushBack(r->listaruta,e);
+                if(j==0)
+                {
+                    e1 = e;
+                    j++;
+                }
+                else
+                {
+                    if(j==1)
+                    {
+                        e2 = e;
+                        
+                        dist += distancia(e1,e2);
+                        e1 = e2;
+                    }
+                }
+            }
+            e = nextList(E);
+        }
+    }*/
+}
 /* Función para comparar claves de tipo string */
 int lower_than_string(void* key1, void* key2){
-    char* k1=(char*) key1;
-    char* k2=(char*) key2;
-    if(strcmp(k1,k2)<0) return 1;
+    float k1=*(float*) key1;
+    float k2=*(float*) key2;
+    if(k1<k2) return 1;
     return 0;
 }
 int main()
@@ -338,13 +442,7 @@ int main()
     Entregas *x = malloc(sizeof(Entregas));
     x->Numentregas = 0;
     x->entregas = createList();
-    float px,py;
-    printf("Favor ingrese sus coordenadas actuales");
-    printf("Posicion en el eje x");
-    scanf("%f",&px);
-    printf("Posicion en el eje y");
-    scanf("%f",&py);
-    
+    Heap*pq = createHeap();
     printf("-----------------------------------------------------------------------\n");
     printf("                          MENU DE RUTAS                                \n");
     printf("-----------------------------------------------------------------------\n");
@@ -365,11 +463,11 @@ int main()
         {
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
-            case 3:entregasCercanas(px,py,x);break;
+            case 3:entregasCercanas(E);break;
             case 4:printf("No Implementada\n");break;
-            case 5:rutaAleatoria(E,r,x,map);break;
-            case 6:printf("No Implementada\n");break;
-            case 7:mostraRutas(x,map);break;
+            case 5:rutaAleatoria(E,r,x,map,pq);break;
+            case 6:mostrarentregas(E,map);break;
+            case 7:mostraRutas(x,map,pq);break;
             case 8:printf("No Implementada\n");break;
         }
     }
