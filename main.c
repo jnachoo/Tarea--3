@@ -70,6 +70,7 @@ Entrega* eaux=firstList(E),*eaux2;
 pushFront(aux,eaux);
 nextList(aux);
 v=0;
+//Ciclo que copia la lista de entregas a la auxiliar y crea un arreglo con sus id y distancias.
 while(eaux){
     distancias[0][v]=distancia(a,eaux);
     distancias[1][v]=eaux->id;
@@ -80,6 +81,7 @@ while(eaux){
 }
 p=0;
 cont=0;
+//Pone en orden de menor a mayor las entregas en la lista orden.
 while(eaux){
     min=0;
     id=0;
@@ -94,7 +96,6 @@ while(eaux){
             p=v;
         }
     }
-    //imprimir aca el id de la posicion y la distancia hacia la misma
     distancias[0][p]=0;
     distancias[1][p]=0;
     eaux=firstList(aux);
@@ -114,6 +115,7 @@ while(eaux){
     }
     cont++;
 }  
+//imprime y permite la seleccion de la primera entrega
 eaux=firstList(orden);
 printf("Entregas pendientes:\n");
 for(v=0;v<tam;v++){
@@ -143,7 +145,7 @@ while(eaux){
         }
     }
 }
-
+//Ciclo de seleccion de las entregas pasada la primera.
 for(v=1;v<tam;v++){
     eaux=firstList(orden);
     printf("Entregas pendientes:\n");
@@ -178,6 +180,7 @@ for(v=1;v<tam;v++){
 printf("La ruta creada es la siguiente: \n");
 eaux=firstList(new->listaruta);
 cont=0;
+//Ciclo que imprime la ruta
 while(eaux){
     printf("%d",eaux->id);
     cont++;
@@ -639,7 +642,7 @@ int main()
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
             case 3:entregasCercanas(E);break;
-            case 4:crearRuta(E);break;
+            case 4:printf("No implementada\n");break;
             case 5:rutaAleatoria(E,r,x,map,pq);break;
             case 6:mostrarentregas(E,map);break;
             case 7:mostraRutas(x,map,pq);break;
