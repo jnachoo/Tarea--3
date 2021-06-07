@@ -511,12 +511,12 @@ void mostrarentregas(List*E, TreeMap *map)
         printf("[%d] = (%d , %d)\n",e->id,e->x,e->y);
         e = nextList(r->listaruta);
     }
-    printf("Seleccione mediante el id, la ruta que desea cambiar");
+    printf("Seleccione mediante el id, la ruta que desea cambiar: ");
     scanf("%d",&p);
     e = firstList(r->listaruta);
     while (e)
     {
-        if(p = e->id)break;
+        if(p == e->id)break;
         e = nextList(r->listaruta);
     }
     int w = rand() % (tamano-2)+1;
@@ -524,9 +524,10 @@ void mostrarentregas(List*E, TreeMap *map)
     Entrega *e2 = firstList(r->listaruta);
     while (e2)
     {
-        if(w = e2->id)break;
+        if(w == e2->id)break;
         e2 = nextList(r->listaruta);
     }
+    /*
     x = e->x;
     e->x = e2->x;
     e2->x = x;
@@ -535,39 +536,53 @@ void mostrarentregas(List*E, TreeMap *map)
     e2->y = y;
     auxid = e->id;
     e->id = e2->id;
-    e2->id = auxid;
-    printf("\nLa ruta seguida es: ");
-    /*int j=0;
+    e2->id = auxid;*/
+    printf("\nLa ruta seguida es: \n");
     Entrega *e1;
-    for(i=0 ; i<tamano ; i++)
+    e = firstList(r->listaruta);
+    while (e)
     {
-        e = firstList(E);
-        e2 = e;
-        while(e)
-        {
-            if(a[i] == e->id)
+        if(p == e->id)
+        { 
+            printf("ENTRODENTRO\n");
+            e1 = e;
+            e = e2;
+            e2 = e1;
+        }
+        e = nextList(r->listaruta);
+    }
+    
+    int j=0;
+    float dist=0;
+    //for(i=0 ; i<tamano ; i++)
+    //{
+    e = firstList(r->listaruta);
+    e2 = e;
+    while(e)
+    {
+            //if( == e->id)
+            //{
+            printf("[%d] ",e->id);
+                //pushBack(r->listaruta,e);
+            if(j==0)
             {
-                printf("[%d] ",e->id);
-                pushBack(r->listaruta,e);
-                if(j==0)
+                e1 = e;
+                j++;
+            }
+            else
+            {
+                if(j==1)
                 {
-                    e1 = e;
-                    j++;
-                }
-                else
-                {
-                    if(j==1)
-                    {
-                        e2 = e;
+                    e2 = e;
                         
-                        dist += distancia(e1,e2);
-                        e1 = e2;
-                    }
+                    dist += distancia(e1,e2);
+                    e1 = e2;
                 }
             }
-            e = nextList(E);
-        }
-    }*/
+           // }
+        e = nextList(r->listaruta);
+    }
+    printf("\nDistancia: %f\n",dist);
 }
 
 void mejorRuta(List * E){
