@@ -501,7 +501,7 @@ void mostraRutas(Entregas *e, TreeMap *map, Heap *pq)
     }
     printf("-----------------------------------------------------------------------\n");
 }
-void mostrarentregas(List*E, TreeMap *map)
+void mejorarRuta(List*E, TreeMap *map)
 {
     int i,p,q;
     Ruta *r = firstTreeMap(map);
@@ -642,11 +642,11 @@ int main()
             case 1:importar(E);break;
             case 2:distanciaEntreEntregas(E);break;
             case 3:entregasCercanas(E);break;
-            case 4:printf("No implementada\n");break;
+            case 4:crearRuta(E);break;
             case 5:rutaAleatoria(E,r,x,map,pq);break;
-            case 6:mostrarentregas(E,map);break;
+            case 6:mejorarRuta(E,map);break;
             case 7:mostraRutas(x,map,pq);break;
-            case 8:crearRuta(E);break;
+            case 8:mejorRuta(E);break;
         }
     }
     return 0;

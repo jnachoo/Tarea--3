@@ -190,7 +190,7 @@ void * upperBound(TreeMap * tree, void* key) {
     //keyaux = tree->current->key;
     if(tree->lower_than(keyaux,key)==1)
     {
-      printf("Entra");
+      //printf("Entra");
       if(!tree->current->right)
       {
         if(tree->lower_than(tree->current->key,key)==1)return NULL;
@@ -207,7 +207,7 @@ void * upperBound(TreeMap * tree, void* key) {
     {
       if(tree->lower_than(key,keyaux)==1)
       {
-        printf("entro");
+        //printf("entro");
         if(!tree->current->left)
         {
           return keyaux;
@@ -245,7 +245,7 @@ void * nextTreeMap(TreeMap * tree) {
       }
       if(tree->current->parent == NULL)
       {
-        printf("entro");
+        //printf("entro");
         return NULL;
       }
       tree->current = tree->current->parent;
@@ -256,7 +256,7 @@ void * nextTreeMap(TreeMap * tree) {
   }
   if(tree->current->right)
   {
-    printf("Entra");
+    //printf("Entra");
     tree->current = tree->current->right;
     tree->current = minimum(tree->current);
     return tree->current->value;
