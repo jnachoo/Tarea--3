@@ -46,6 +46,150 @@ float distancia(Entrega * entrega1, Entrega * entrega2){
     return d;
 }
 
+//Prototipo de crear Ruta
+void crearRuta(List* E)
+{
+Ruta* new=(Ruta*) malloc(sizeof(Ruta));
+new->listaruta=createList;
+int px,py,v,tam,cont,v1;
+printf("Favor ingrese sus coordenadas actuales\n");
+printf("Posicion en el eje x: ");
+scanf("%d",&px);
+printf("Posicion en el eje y: ");
+scanf("%d",&py);
+tam=size(E);
+float distancias[2][tam];
+float min;
+int id,p;
+List* aux=createList;
+List* orden=createList;   
+Entrega* a= malloc(sizeof(Entrega));
+a->y=py;
+a->x=px;
+Entrega* eaux=firstList(E),*eaux2;
+pushFront(aux,eaux);
+nextList(aux);
+v=0;
+while(eaux){
+    distancias[0][v]=distancia(a,eaux);
+    distancias[1][v]=eaux->id;
+    eaux=nextList(E);
+    pushCurrent(aux,eaux);
+    nextList(aux);
+    v++;
+}
+p=0;
+cont=0;
+while(eaux){
+    min=0;
+    id=0;
+    for(v=0;v<tam;v++){
+        if(min==0 && distancias[0][v]!= 0){
+            min=distancias[0][v];
+            id=distancias[1][v];
+            p=v;
+        } else if(min>distancias[0][v] && distancias[0][v]!=0){
+            min=distancias[0][v];
+            id=distancias[1][v];
+            p=v;
+        }
+    }
+    //imprimir aca el id de la posicion y la distancia hacia la misma
+    distancias[0][p]=0;
+    distancias[1][p]=0;
+    eaux=firstList(aux);
+    while(eaux){
+        if(eaux->id==id && cont=0){
+            pushFront(orden,eaux);
+            nextList(orden);
+            popCurrent(aux);
+            break;
+        }else if(eaux->id==id){
+            pushCurrent(orden,eaux);
+            nextList(orden);
+            popCurrent(aux);
+            break;
+        }
+        eaux=nextList(aux);
+    }
+    cont++;
+}  
+eaux=firstList(orden);
+printf("Entregas pendientes:\n");
+for(v=0;v<tam;v++){
+    min=distancia(a,eaux);
+    printf("Id:%d Distancia:%f\n",eaux->id,min);
+    eaux=nextList(orden);
+}
+printf("Favor indicar inicio de ruta\n");
+scanf("%d",&id);
+eaux=firstList(orden);
+cont=0;
+while(eaux){
+    if(eaux->id==id){
+        min=distancia(a,eaux);
+        new->distancia+=min;
+        pushFront(new->listaruta,eaux);
+        nextList(new->listaruta);
+        eaux2=eaux;
+        popCurrent(orden);
+        break;
+    }else{
+        eaux=nextList(orden);
+        cont++;
+        if(cont==tam-1){
+            printf("La id ingresada no es valida\n");
+            return;
+        }
+    }
+}
+
+for(v=1;v<tam;v++){
+    eaux=firstList(orden);
+    printf("Entregas pendientes:\n");
+    for(v1=0;v1<tam-v;v1++){
+        min=distancia(eaux2,eaux);
+        printf("Id:%d Distancia:%f\n",eaux->id,min);
+        eaux=nextList(orden);
+    }
+    printf("Favor elija la siguiente entrega de la ruta\n");
+    scanf("%d",&id);
+    eaux=firstList(orden);
+    cont=0;
+    while(eaux){
+        if(eaux->id==id){
+            min=distancia(eaux2,eaux);
+            new->distancia+=min;
+            pushCurrent(new->listaruta,eaux);
+            nextList(new->listaruta);
+            eaux2=eaux;
+            popCurrent(orden);
+            break;
+        }else{
+            eaux=nextList(orden);
+            cont++;
+            if(cont==tam-1){
+                printf("La id ingresada no es valida\n");
+                return;
+            }
+        }
+    }
+}
+printf("La ruta creada es la siguiente: \n");
+eaux=firstList(new->listaruta);
+cont=0;
+while(eaux){
+    printf("%d",eaux->id);
+    cont++;
+    eaux=nextList(new->listaruta);
+    if(cont==tam)break;
+    printf(" - ");
+}
+printf("\n Favor ingrese el nombre de la ruta");
+scanf("%s",&new->nombre);
+return;
+}
+
 void entregasCercanas(List* E)
 {
     Entregas *d;
