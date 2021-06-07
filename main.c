@@ -569,6 +569,20 @@ void mostrarentregas(List*E, TreeMap *map)
         }
     }*/
 }
+
+void mejorRuta(List * E){
+    if(size(E) ==0){
+        printf("No hay entregas suficientes\n");
+        return;
+    }
+    int px,py;
+    printf("Ingresa posicion x: ");
+    scanf("%d",&px);
+    printf("Ingresa posicion y: ");
+    scanf("%d",&py);
+
+    
+}
 /* Función para comparar claves de tipo string */
 int lower_than_string(void* key1, void* key2){
     float k1=*(float*) key1;
@@ -612,7 +626,7 @@ int main()
             case 5:rutaAleatoria(E,r,x,map,pq);break;
             case 6:mostrarentregas(E,map);break;
             case 7:mostraRutas(x,map,pq);break;
-            case 8:printf("No Implementada\n");break;
+            case 8:crearRuta(E);break;
         }
     }
     return 0;
