@@ -1,10 +1,10 @@
 # Tarea--3
 Errores: 
 1.- Funcion ruta aleatoria, no guarda las rutas como deberia, se usa un arbol binario de busqueda para guardarlas y solo se inserta el ultimo dato ingresado, creo que existe un fallo en la implementacion del mapa, ya que en la busqueda de datos entrega como si las distancias fueran iguales, se prueba insertando en lista y se logran ver la cantidad de rutas ingresadas, aunque vuelve a solo mostrar la ultima ingresada, y en un monticulo, tambien solo se muestra la ultima posicion, tambien pasa que si nos vamos a listaruta, estan almacenadas todas las entregas por las que se ha pasado.
-2.- Funcion modificar Ruta, muestra la ruta ingresada, falla si se ingresa mas de una entrega, ya que se sobreescribe en la lista ruta, es si o si una posicion escogida y otra random.
-3.-Funcion crear Ruta no funciona.
-4.- Dado que la funcion ruta aleatoria no guarda correctamente, nose muestra correctamente.
-5.- funcion mejorar ruta solo funciona de manera semi-aleatoria
+2.- Funcion mejorar ruta solo funciona de manera semi-aleatoria
+3.- Funcion crear Ruta no funciona.
+4.- Funcion mostrar todas las rutas,Dado que la funcion ruta aleatoria no guarda correctamente, nose muestra correctamente. 
+5.- Funcion mejor Ruta no esta completa.
 
 Ignacio Cabrera:
 Ascpectos a mejorar: Ayudar mas al grupo, usar mejor los tiempos dados para realizar la tarea.

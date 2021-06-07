@@ -489,7 +489,13 @@ void mostraRutas(Entregas *e, TreeMap *map, Heap *pq)
         printf("-----------------------------------------------------------------------\n");
         int i;
         Ruta *r = firstTreeMap(map);
-        printf("Nombre: %s ,Distancia: %f\n",r->nombre,r->distancia);
+        while (r)
+        {
+            printf("Nombre: %s ,Distancia: %f\n",r->nombre,r->distancia);
+            r = nextTreeMap(map);
+        }
+        
+        
         //if(nextTreeMap(map)==NULL) printf("NULL");
         /*
         while(heap_top(pq)){
@@ -503,11 +509,15 @@ void mostraRutas(Entregas *e, TreeMap *map, Heap *pq)
 }
 void mejorarRuta(List*E, TreeMap *map)
 {
+    int caso =1;
+  do
+  {  
     int i,p,q;
     Ruta *r = firstTreeMap(map);
     printf("La distancia de la ruta %s es %f\n",r->nombre,r->distancia);
     int tamano = size(r->listaruta);
     Entrega *e = firstList(r->listaruta);
+    Entrega *e4;
     printf("ID     X        Y\n");
     while (e)
     {
@@ -516,11 +526,11 @@ void mejorarRuta(List*E, TreeMap *map)
     }
     printf("Seleccione mediante el id, la ruta que desea cambiar: ");
     scanf("%d",&p);
-    e = firstList(r->listaruta);
-    while (e)
+    e4 = firstList(r->listaruta);
+    while (e4)
     {
-        if(p == e->id)break;
-        e = nextList(r->listaruta);
+        if(p == e4->id)break;
+        e4 = nextList(r->listaruta);
     }
     int w = rand() % (tamano-2)+1;
     int x,y,auxid;
@@ -540,18 +550,33 @@ void mejorarRuta(List*E, TreeMap *map)
     auxid = e->id;
     e->id = e2->id;
     e2->id = auxid;*/
-    printf("\nLa ruta seguida es: \n");
+    printf("\nSus cambios fueron: \n");
+    i=0;
     Entrega *e1;
+    List *laux = createList();
     e = firstList(r->listaruta);
     while (e)
     {
-        if(p == e->id)
+        if(p == e->id && i<2)
         { 
-            printf("ENTRODENTRO\n");
+            //printf("ENTRODENTRO\n");
+            i++;
             e1 = e;
+            printf("La entrega con id: %d ",e->id);
             e = e2;
+            printf(", cambio a: %d \n",e->id);
             e2 = e1;
         }
+        if(w == e->id && i<2)
+        {
+            i++;
+            e1 = e;
+            printf("La entrega con id: %d ",e->id);
+            e = e4;
+            printf(", cambio a: %d \n",e->id);
+            e4 = e1;
+        }
+        pushBack(laux,e);
         e = nextList(r->listaruta);
     }
     
@@ -559,7 +584,8 @@ void mejorarRuta(List*E, TreeMap *map)
     float dist=0;
     //for(i=0 ; i<tamano ; i++)
     //{
-    e = firstList(r->listaruta);
+        printf("La nueva ruta es: ");
+    e = firstList(laux);
     e2 = e;
     while(e)
     {
@@ -583,9 +609,18 @@ void mejorarRuta(List*E, TreeMap *map)
                 }
             }
            // }
-        e = nextList(r->listaruta);
+        e = nextList(laux);
     }
-    printf("\nDistancia: %f\n",dist);
+    printf("\nNueva Distancia: %f\n",dist);
+    r->distancia = dist;
+    r->listaruta = laux;
+    printf("-----------------------------------------------------------------------\n");
+    printf("Si desea cambiar otra posicion presione '0', de lo contrario otro numero\n");
+    scanf("%d",&caso);
+    printf("-----------------------------------------------------------------------\n");
+  }while (caso==0);
+  printf("                  Cambios realizados con exito\n");
+  printf("-----------------------------------------------------------------------\n");
 }
 
 void mejorRuta(List * E){
@@ -593,6 +628,7 @@ void mejorRuta(List * E){
         printf("No hay entregas suficientes.\n");
         return;
     }
+    Heap*h =createHeap();
     int px,py;
     printf("Ingresa posicion x: ");
     scanf("%d",&px);
