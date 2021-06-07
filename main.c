@@ -50,7 +50,7 @@ float distancia(Entrega * entrega1, Entrega * entrega2){
 void crearRuta(List* E)
 {
 Ruta* new=(Ruta*) malloc(sizeof(Ruta));
-new->listaruta=createList;
+new->listaruta=createList();
 int px,py,v,tam,cont,v1;
 printf("Favor ingrese sus coordenadas actuales\n");
 printf("Posicion en el eje x: ");
@@ -61,8 +61,8 @@ tam=size(E);
 float distancias[2][tam];
 float min;
 int id,p;
-List* aux=createList;
-List* orden=createList;   
+List* aux=createList();
+List* orden=createList();   
 Entrega* a= malloc(sizeof(Entrega));
 a->y=py;
 a->x=px;
@@ -99,7 +99,7 @@ while(eaux){
     distancias[1][p]=0;
     eaux=firstList(aux);
     while(eaux){
-        if(eaux->id==id && cont=0){
+        if((eaux->id==id) && (cont=0)){
             pushFront(orden,eaux);
             nextList(orden);
             popCurrent(aux);
